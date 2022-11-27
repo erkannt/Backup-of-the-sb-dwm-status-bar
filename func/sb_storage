@@ -1,0 +1,16 @@
+# gets storage information from df
+# prints used/available
+
+storage() {
+	DISK="$1"
+	[ -z "$DISK" ] && DISK="/"
+	printf "$DISK: "
+        command df -h | while read -r _ size used _ _ mnt; do
+            [ "$mnt" = "$DISK" ] || continue
+            used=${used%G} size=${size%G}
+            printf "$used/$size GB"
+            break
+        done
+	printf " $DELIMITER "
+}
+

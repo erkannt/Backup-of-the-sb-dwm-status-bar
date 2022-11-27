@@ -1,0 +1,10 @@
+# Gets the battery state and capacity
+# prints to stdout
+battery() {
+    read -r stat < "/sys/class/power_supply/${BATTERY:=BAT0}/status"
+    read -r cap < "/sys/class/power_supply/$BATTERY/capacity"
+    [ "$cap" -lt 25 ] && [ "$COLORBAR" ] && printf '\x04 '
+    printf '%s%% [%s] %s ' "$cap" "$stat" "${COLORBAR+$(printf '\x01')}$DELIMITER"
+}
+xsetroot -name "$(battery)"
+

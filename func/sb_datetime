@@ -1,0 +1,6 @@
+# Gets datetime and prints to stdout
+
+datetime() {
+        printf '%s %s ' "$(command date +"${DATE:-%a %d %b %Y %H:%M}")" "$DELIMITER"
+}
+

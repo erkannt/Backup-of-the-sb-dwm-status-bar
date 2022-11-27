@@ -1,0 +1,12 @@
+# gets song info from mpd
+
+showmpd() {
+    out=$(mpc -f "[[%artist% - ]%title%]|[%file%]" 2>/dev/null | tr '\n' ' ')
+    time="${out#*] */* }" time="${time## }" time=${time%% (*}
+    out=${out%% \[*}
+
+    [ "$out" = "$time" ] && return 0
+
+    printf 'Playing: %s %s %s ' "$out" "$time" "$DELIMETER"
+}
+

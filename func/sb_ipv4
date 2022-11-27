@@ -1,0 +1,9 @@
+# gets ip information from the ip
+# command and prints to stdout.
+# requires interface name as the argument.
+
+ipv4() {
+    IPV4="$(ip a show "${1:?}" 2>/dev/null | grep 'inet ' | sed 's/^.*inet //;s/\/.*$//')"
+    [ "$IPV4" ] && printf '%s: %s %s ' "$1" "$IPV4" "$DELIMITER"
+}
+
