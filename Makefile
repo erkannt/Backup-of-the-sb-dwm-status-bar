@@ -15,10 +15,10 @@ install:
 	sed 's#vnumber#${VERSION}#g' < sbrc.5 > ${DESTDIR}${MANPREFIX}/man5/sbrc.5
  
  uninstall:
- 	rm -rf \
- 		${DESTDIR}${BINDIR}/sb \
- 		${DESTDIR}${PREFIX}/share/sb-func \
- 		${DESTDIR}${MANPREFIX}/man1/sb.1 \
- 		${DESTDIR}${MANPREFIX}/man5/sbrc.5
- 
+	rm -rf \
+	${DESTDIR}${BINDIR}/sb \
+	${DESTDIR}${PREFIX}/share/sb-func \
+	${DESTDIR}${MANPREFIX}/man1/sb.1 \
+	${DESTDIR}${MANPREFIX}/man5/sbrc.5
+
  .PHONY: install uninstall
