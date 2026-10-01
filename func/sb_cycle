@@ -1,17 +1,26 @@
-# Prints the current ISO Week, quarter, cycle and cycle week to stdout
+# Prints the current ISO Week, chunk and chunk week to stdout
 # The 52 weeks of the year are divided into four _quarters_ of 13 weeks.
-# Each quarter has three _cycles_ of four weeks and ends with a _reset_ week.
+# Each quarter has three _chunks_ of four weeks and ends with a _reset_ week.
+# Chunks are numbered continuously from 1 to 12 throughout the year; reset
+# weeks are not part of any chunk and belong to their quarter instead.
 
 cycle() {
 	local iso_week=$(date +%V | sed 's/^0*//')
         local quarter=$(( (iso_week - 1) / 13 + 1 ))
-        local cycle=$(( (iso_week - 1) % 13 / 4 + 1 ))
-        local cycle_week=$(( (iso_week - 1) % 13 % 4 + 1 ))
+        local chunk=$(( (iso_week - 1) % 13 / 4 + 1 ))
+        local chunk_continuous_numbering=$(( (quarter - 1) * 3 + chunk ))
+        local chunk_week=$(( (iso_week - 1) % 13 % 4 + 1 ))
 
-        if [ "$cycle" -eq 4 ]; then
-                printf '%02d-%d/reset' "$iso_week" "$quarter"
+        # Week 53 (in long ISO years) is an additional Q4 reset week
+        if [ "$iso_week" -eq 53 ]; then
+                quarter=4
+                chunk=4
+        fi
+
+        if [ "$chunk" -eq 4 ]; then
+                printf '%02d Q%d-reset' "$iso_week" "$quarter"
         else
-                printf '%02d-%d/%d/%d' "$iso_week" "$quarter" "$cycle" "$cycle_week"
+                printf '%02d-%d/%d' "$iso_week" "$chunk_continuous_numbering" "$chunk_week"
         fi
 
         printf ' %s ' "$DELIMITER"
