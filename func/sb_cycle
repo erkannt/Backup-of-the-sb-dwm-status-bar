@@ -6,7 +6,7 @@ cycle() {
 	local iso_week=$(date +%V | sed 's/^0*//')
         local quarter=$(( (iso_week - 1) / 13 + 1 ))
         local cycle=$(( (iso_week - 1) % 13 / 4 + 1 ))
-        local cycle_week=$(( (iso_week - 1) % 4 + 1 ))
+        local cycle_week=$(( (iso_week - 1) % 13 % 4 + 1 ))
 
         if [ "$cycle" -eq 4 ]; then
                 printf '%02d-%d/reset' "$iso_week" "$quarter"
