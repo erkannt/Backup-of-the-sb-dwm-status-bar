@@ -1,0 +1,30 @@
+# Prints CPU usage and used RAM to stdout, e.g. "87% 16GB"
+# CPU usage is measured since the previous call, so the last
+# /proc/stat sample is kept in a state file between refreshes.
+
+resources() {
+    statefile="/tmp/sb-cpu-$USER"
+
+    read -r _ user nice system idle iowait irq softirq steal _ < /proc/stat
+    idle=$(( idle + iowait ))
+    total=$(( user + nice + system + idle + irq + softirq + steal ))
+
+    prev_idle=0 prev_total=0
+    [ -r "$statefile" ] && read -r prev_idle prev_total < "$statefile"
+    printf '%s %s\n' "$idle" "$total" > "$statefile"
+
+    diff_total=$(( total - prev_total ))
+    [ "$diff_total" -gt 0 ] || diff_total=1
+    cpu=$(( 100 * (diff_total - (idle - prev_idle)) / diff_total ))
+
+    while read -r key value _; do
+        case "$key" in
+            MemTotal:) memtotal="$value" ;;
+            MemAvailable:) memavail="$value" ;;
+        esac
+    done < /proc/meminfo
+    # kB to GB, rounded
+    memused=$(( (memtotal - memavail + 524288) / 1048576 ))
+
+    printf '%s%% %sGB %s ' "$cpu" "$memused" "$DELIMITER"
+}
